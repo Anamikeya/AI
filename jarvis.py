@@ -4,11 +4,22 @@ import speech_recognition as sr
 import wikipedia
 import smtplib
 import webbrowser as wb
-
-
+import os
+import subprocess, sys
+from pygame import mixer  # Load the popular external library
+import pyautogui
+import psutil
+import pyjokes
 
 engine=pyttsx3.init()
 engine.setProperty('rate',125)
+
+def song():
+
+    mixer.init()
+    mixer.music.load('/home/anamikeya/music',music[0])
+    mixer.music.play()
+
 def speak(audio):
     engine.say(audio)
     engine.runAndWait()
@@ -29,7 +40,7 @@ def take():
     r=sr.Recognizer()
     with sr.Microphone() as source:
         print("listening...")
-        r.pause_threshold=1
+        r.pause_threshold=2
         audio=r.listen(source)
     try:
         print("recognising...")
@@ -54,6 +65,25 @@ def sendemail(to, content):
     server.login('nayakpearl2@gmail.com','anamika05')
     server.sendmail('nayakpearl2@gmail.com',to,content)
     server.close()
+def screenshot():
+    img= pyautogui.screenshot()
+    speak("tell the name of the image")
+    x=take()
+    
+    img.save('/home/anamikeya/Pictures/'+x+'.jpg')
+def cpu():
+    usage=str(psutil.cpu_percent())
+    speak('spu is at'+usage)
+    battery= psutil.sensors_battery()
+    speak("battery is at")
+    speak(battery.percent)
+def joke():
+
+    speak(pyjokes.get_joke())
+
+
+
+
 
 if __name__ == "__main__":
     wish()
@@ -83,5 +113,40 @@ if __name__ == "__main__":
             chromepath='/etc/alternatives/google-chrome'
             search=take().lower()
             wb.get(chromepath).open_new_tab(search+'.com')
-           
-
+        elif "go ofline" in query:
+             speak("bye sir")
+             os._exit(1)
+        elif "who is my brother" in query:
+            speak("veer")  
+        elif "add" in query:
+            speak("enter two numbers with your keyboard")
+            x=int(input("enter dirst number\n"))
+            y=int(input("ennter second number\n"))
+            z=x+y
+            speak(z)
+        elif "play song" in query:
+            
+            song()
+        elif "remember that" in query:
+            speak("what should i remember")
+            data=take()
+            speak("you told me to remember that"+data)
+            remember = open('data.txt','w')
+            remember.write(data)
+            remember.close
+        elif 'do you know anything' in query:
+            remember=open('data.txt','r')
+            speak("you told me to remember that"+remember.read())
+        elif "go offline" in query:
+            speak("bye sir")
+            os._exit(1)
+        elif 'screenshot' in query:
+            screenshot()
+            speak("done!")
+        elif 'system info' in query:
+            cpu()
+        elif "joke" in query:
+            joke()
+        elif "who created you" in query:
+            speak("anurag pandey")
+        elif ""
